@@ -1,0 +1,22 @@
+Quick Training Summary
+=======================
+Date: 08-16-2025 01-40-45
+Training Type: test-train
+Epochs Run: 3
+
+Best Metrics:
+-------------
+F1 Score: 0.378
+Precision: 0.387
+Recall: 0.369
+mAP@0.5: 0.345
+mAP@0.5:0.95: 0.172
+
+Losses:
+-------
+Box Loss: 2.2027
+Class Loss: 2.3066
+DFL Loss: 1.4508
+
+New Images Added: 0
+Total Images Used: 1372
