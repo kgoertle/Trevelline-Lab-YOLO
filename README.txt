@@ -1,5 +1,5 @@
-conda activate yolo-env
-cd C:\Users\TheGo\Documents\YOLO
+mamba activate yolo-env
+cd /home/trevelline-lab-pi-1/YOLO
 
 =================================
 Training Script Functionalities:
@@ -99,3 +99,4 @@ python detect.py --detect --sources (picamera0, usb0, C:\path\to\video.type)
 
 ## To test the detection script with preferred settings:
 python detect.py --test-detect --lab --sources (picamera0, usb0, C:\path\to\video.type)
+
