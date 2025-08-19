@@ -305,6 +305,9 @@ def run_detection(model, source, source_type, test_detect=False, smoother=None, 
 # ----------------
 
 if __name__=="__main__":
+    from torch.serialization import safe_globals
+    from ultralytics.nn.tasks import DetectionModel
+
     parser=argparse.ArgumentParser(description="Run YOLO detection using latest best.pt")
     parser.add_argument("--detect",action="store_true")
     parser.add_argument("--test-detect",action="store_true")
@@ -315,12 +318,19 @@ if __name__=="__main__":
     parser.add_argument("--max-history",type=int,default=0)
     args=parser.parse_args()
 
-    if args.detect and args.test_detect: print("ERROR: Choose either --detect or --test-detect, not both."); sys.exit(1)
+    if args.detect and args.test_detect: 
+        print("ERROR: Choose either --detect or --test-detect, not both.")
+        sys.exit(1)
+
     weights_path=find_latest_best(BASE_DIR/("runs/detect" if args.detect else "runs/test"))
-    if not weights_path: print("ERROR: Could not find a valid best.pt"); sys.exit(1)
+    if not weights_path: 
+        print("ERROR: Could not find a valid best.pt")
+        sys.exit(1)
 
     print(f"[INFO] Loading shared YOLO model from {weights_path}")
-    model=YOLO(str(weights_path)); model.weights_path=weights_path
+    with safe_globals([DetectionModel]):
+        model = YOLO(str(weights_path))
+        model.weights_path = weights_path
 
     user_set_flags={'smooth':'--smooth' in sys.argv,'dist_thresh':'--dist-thresh' in sys.argv,'max_history':'--max-history' in sys.argv}
     default_params={'smooth':1.0,'dist_thresh':None,'max_history':0}
