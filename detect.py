@@ -10,6 +10,7 @@ import numpy as np
 import cv2
 import csv
 from ultralytics import YOLO
+import warnings
 
 BASE_DIR = Path(f"/home/{getpass.getuser()}/YOLO")
 BASE_DIR.mkdir(parents=True, exist_ok=True)
@@ -29,17 +30,25 @@ CLASS_COLORS = {
 
 def find_latest_best(base_path):
     base_path = Path(base_path)
-    if not base_path.exists(): return None
+    if not base_path.exists():
+        return None
+
     train_dirs = [d for d in base_path.iterdir() if d.is_dir() and d.name.startswith("train (")]
-    if not train_dirs: return None
+    if not train_dirs:
+        return None
 
     def parse_ts(folder_name):
-        try: return datetime.strptime(folder_name.replace("train (", "").replace(")", ""), "%m-%d-%Y %H-%M-%S")
-        except: return datetime.min
+        try:
+            ts_str = folder_name[7:-1]
+            return datetime.strptime(ts_str, "%m-%d-%Y %H-%M-%S")
+        except Exception:
+            return datetime.min
 
     latest_dir = max(train_dirs, key=lambda d: parse_ts(d.name))
     best_pt = latest_dir / "weights" / "best.pt"
-    return best_pt if best_pt.exists() else None
+    if best_pt.exists():
+        return best_pt
+    return None
 
 def get_output_folder(weights_path, source_type, source_name, test_detect=False):
     train_folder = weights_path.parent.parent
@@ -111,6 +120,8 @@ def update_csv_file(csv_dir, interactions, session_start, session_end):
                 data.get("frames",0)
             ])
     return csv_file
+
+warnings.filterwarnings("ignore", category=UserWarning, message="pkg_resources.*")
 
 # ---------------------
 # Detection setup
