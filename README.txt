@@ -1,10 +1,7 @@
-mamba activate yolo-env
-cd /home/trevelline-lab-pi-1/YOLO
-
 =================================
 Training Script Functionalities:
 =================================
-	- Automatically aquires the most recent YOLO nano model (yolo11n.pt) to retreive pre-trained weights for transfer learning (--train), 
+	- Automatically aquires the most recent YOLO nano model (yolo8n.pt) to retreive pre-trained weights for transfer learning (--train), 
 	  or the model backbone (yolo11.yaml) for training from scratch (--scratch-train).
 	  
 	- Accessible model updating feature (--auto-train) that looks for the most recent
@@ -99,4 +96,20 @@ python detect.py --detect --sources (picamera0, usb0, C:\path\to\video.type)
 
 ## To test the detection script with preferred settings:
 python detect.py --test-detect --lab --sources (picamera0, usb0, C:\path\to\video.type)
+
+------------------
+Terminal Commands:
+------------------
+
+## Run these to get mamba environment setup (after installation):
+mama create -n yolo-env
+mamba activate yolo-env
+cd /home/trevelline-lab-pi-1/YOLO
+
+## Run these to install dependencies:
+pip install ultralytics==8.0.20
+pip install torch==1.13.1+cpu torchvision==0.14.1+cpu --extra-index-url https://download.pytorch.org/whl/cpu
+pip install Pillow==10.0.1 opencv-python-headless==4.7.0 matplotlib==3.6.3 tqdm==4.64.1
+pip install pandas==1.5.3
+
 
