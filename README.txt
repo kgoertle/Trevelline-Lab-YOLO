@@ -106,11 +106,19 @@ mama create -n yolo-env python=3.10
 mamba activate yolo-env
 cd /home/trevelline-lab-pi-1/YOLO
 
-## Run these to install dependencies:
+# 1. Torch & Torchvision first
+pip install --no-cache-dir torch==1.13.1+cpu torchvision==0.14.1+cpu \
+    --extra-index-url https://download.pytorch.org/whl/cpu
+
+# 2. Specific dependencies for Pi
+pip install --no-cache-dir numpy==1.23.0 pandas==1.5.3 matplotlib==3.6.3 tqdm==4.64.1 Pillow==10.0.1
+
+# 3. OpenCV
+pip install --no-cache-dir opencv-python-headless==4.7.0
+
+# 4. Ultralytics
 pip install --no-cache-dir ultralytics==8.0.100
-pip install --no-cache-dir torch==1.13.1+cpu torchvision==0.14.1+cpu --extra-index-url https://download.pytorch.org/whl/cpu
-pip install --no-cache-dir Pillow==10.0.1 opencv-python-headless==4.7.0 matplotlib==3.6.3 tqdm==4.64.1
-pip install --no-cache-dir pandas==1.5.3
+
 
 
 
