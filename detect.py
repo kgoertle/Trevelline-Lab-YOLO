@@ -91,7 +91,7 @@ def run_detection(model, source, source_type, test_detect=False, smoother=None):
     elif source_type == "picamera":
         if not IS_LINUX: raise RuntimeError("[ERROR] Pi Camera only supported on Linux.")
         from picamera2 import Picamera2
-        cap = Picamera2(); cap.configure(cap.create_video_configuration(main={"format": 'RGB888', "size": (1280,720)})); cap.start()
+        cap = Picamera2(); cap.configure(cap.create_video_configuration(main={"format": 'RGB888', "size": (640,480)})); cap.start()
     else:
         cap = cv2.VideoCapture(str(source))
     if not cap or (source_type!="picamera" and not cap.isOpened()): print(f"[ERROR] Could not open {source_name}!"); return
@@ -108,7 +108,7 @@ def run_detection(model, source, source_type, test_detect=False, smoother=None):
     session_start = datetime.now()
 
     try:
-        while not stop_event.is_set():
+        while not stop_event.is_set(): 
             ret, frame = (cap.read() if source_type!="picamera" else (True, cap.capture_array())) 
             if not ret or frame is None: break
             frame_resized = cv2.resize(frame, (1280,720))
@@ -163,7 +163,7 @@ def run_detection(model, source, source_type, test_detect=False, smoother=None):
             print(f"\rFrames: {frame_count} | Objects: {obj_count} | Interactions: {interaction_counter} | FPS: {fps_smooth:.1f}", end="")
             out_writer.write(frame_resized)
 
-    finally: # safe quit with logs
+    finally: # -- safe quit with logs --
         if source_type in ["usb","video"]: cap.release()
         elif source_type=="picamera": cap.stop()
         out_writer.release()
@@ -198,7 +198,7 @@ if __name__=="__main__":
         if not user_set_flags['max_history']: args.max_history=4
     report_smoothing_params(args,user_set_flags,{'smooth':1.0,'dist_thresh':None,'max_history':0})
 
-    smoothers, threads = {}, []
+    smoothers, threads = {}, [] # imbeds smoothing parameters with run_detection parses
     for src in args.sources:
         if src.lower().startswith("usb"): source_type="usb"; src_id=int(src[3:])
         elif src.lower().startswith("picamera"): source_type="picamera"; src_id=int(src[9:])
@@ -207,7 +207,7 @@ if __name__=="__main__":
         t = threading.Thread(target=run_detection, args=(model, src_id, source_type, args.test_detect, smoothers[src_id]))
         t.start(); threads.append(t)
 
-    try: [t.join() for t in threads]
+    try: [t.join() for t in threads] # closes safely and saves metrics
     except KeyboardInterrupt:
         print("\n[EXIT] Stop signal received. Terminating threads...")
         stop_event.set(); [t.join() for t in threads]
