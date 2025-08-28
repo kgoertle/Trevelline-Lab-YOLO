@@ -1,55 +1,3 @@
-=================================
-Training Script Functionalities:
-=================================
-	- Automatically aquires the most recent YOLO nano model (yolo8n.pt) to retreive pre-trained weights for transfer learning (--train), 
-	  or the model backbone (yolo11.yaml) for training from scratch (--scratch-train).
-	  
-	- Accessible model updating feature (--auto-train) that looks for the most recent
-	  best.pt file and only updates with previously trained weights with new training data.
-	  
-	- Organized output structure based on timestamps and training type.
-	
-	- Inclusion of a log folder that includes a summary text document, the full
-	  results.csv, and a metadata.json file for tracking model updates.
-	  (...\logs\(runs / test-runs)\train (mm-dd-yyyy hh-mm-ss)
-	  
-	- Catered toward small object detection models.
-	
-	- Can be launched from an accessible .bat file.
-	
-	- Downloads all requirements automatically.
-	
-	- Test models are entirely separated from the base models that will be used.
-
---------------------
-Training Arguments:
---------------------
-
-## To run the validation split script:
-python train_val_split.py
-
-## To update the most recently generated best.pt file:
-python train_start.py --auto-train
-
-## To run fresh training taking advantage of transfer learning:
-python train_start.py --train
-
-## To run training completely from scratch:
-python train_start.py --scratch-train
-
--------------------------
-Test Training Arguments:
--------------------------
-
-## To test an update to the most recently generated best.pt file:
-python train_start.py --test-auto-train
-
-## To run a test that trains fresh taking advantage of transfer learning:
-python train_start.py --test-train
-
-## To run a test that trains completely from scratch:
-python train_start.py --test-scratch-train
-
 ================================
 Detection Script Functionality:
 ================================
@@ -57,12 +5,12 @@ Detection Script Functionality:
 	- Allows for either standard detections (--detect), or option for testing (--test-detect).
 		This automatically looks for the best.pt file in the appropriate runs / test-runs folder.
 	  
-	- Multiple source input compatibility. USB and PI cameras are supported, along with video input.
+	- PI cameras are supported, along with video input.
 		Output recordings of processed sources are in associated model logs folder. 
 		They are recorded as a timestamp from when the detection first began. (mm-dd-yyyy hh-mm-ss)
-		(...\logs\(test-runs / runs)\train (timestamp)\recordings\(usb / picamera / video-input)
+		(...\logs\(test / runs)\train (timestamp)\recordings\(usb / picamera / video-input)
 	
-	- Supports running multiple cameras of either type alongside video input. (--sources picamera0 usb0 C:\path\to\video.type)
+	- Supports running camera of either type or video input. (--sources picamera0/usb0 \path\to\video.type)
 		Independent windows for each source, each with their own FPS, object detection, and generic interaction conters.
 		Auto scales windows depending on number of sources, with a supported number of 4.
 		Windows are labeled accordingly and can also be adjusted manually like most other programs.
@@ -89,13 +37,13 @@ Detection Arguments:
 ---------------------
 
 ## To run the detection script with preferred settings:
-python detect.py --detect --lab --sources (picamera0, usb0, C:\path\to\video.type)
+python detect.py --detect --lab --sources (picamera0, usb0, \path\to\video.type)
 
 ## To run the detection script with Ultralytics default settings:
-python detect.py --detect --sources (picamera0, usb0, C:\path\to\video.type)
+python detect.py --detect --sources (picamera0, usb0, \path\to\video.type)
 
 ## To test the detection script with preferred settings:
-python detect.py --test-detect --lab --sources (picamera0, usb0, C:\path\to\video.type)
+python detect.py --test-detect --lab --sources (picamera0, usb0, \path\to\video.type)
 
 ------------------
 Terminal Commands:
@@ -106,18 +54,12 @@ mama create -n yolo-env python=3.10
 mamba activate yolo-env
 cd /home/trevelline-lab-pi-1/YOLO
 
-# 1. Torch & Torchvision first
-pip install --no-cache-dir torch==1.13.1+cpu torchvision==0.14.1+cpu \
-    --extra-index-url https://download.pytorch.org/whl/cpu
+## Required libraries:
+numpy>=1.23.0
+opencv-python-headless>=4.7.0
+tflite-runtime>=2.15.0
+picamera2>=0.0.4; sys_platform == "linux"
 
-# 2. Specific dependencies for Pi
-pip install --no-cache-dir numpy==1.23.0 pandas==1.5.3 matplotlib==3.6.3 tqdm==4.64.1 Pillow==10.0.1
-
-# 3. OpenCV
-pip install --no-cache-dir opencv-python-headless==4.7.0
-
-# 4. Ultralytics
-pip install --no-cache-dir ultralytics==8.0.100
 
 
 
